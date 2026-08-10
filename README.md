@@ -1,5 +1,5 @@
 <p align="center">
-  <img src="docs/assets/logo.png" alt="KLIMA" width="280" />
+  <img src="docs/assets/logo.png" alt="KLIMA" width="420" />
 </p>
 
 <p align="center">
