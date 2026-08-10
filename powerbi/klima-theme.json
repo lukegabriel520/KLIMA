@@ -1,0 +1,57 @@
+{
+  "name": "KLIMA",
+  "dataColors": [
+    "#0B3D91",
+    "#1B9E77",
+    "#E69F00",
+    "#D55E00",
+    "#56B4E9",
+    "#009E73",
+    "#F0E442",
+    "#CC79A7"
+  ],
+  "background": "#0F172A",
+  "foreground": "#E2E8F0",
+  "tableAccent": "#1B9E77",
+  "good": "#1B9E77",
+  "neutral": "#E69F00",
+  "bad": "#D55E00",
+  "maximum": "#0B3D91",
+  "minimum": "#56B4E9",
+  "textClasses": {
+    "callout": {
+      "fontSize": 28,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#F8FAFC"
+    },
+    "title": {
+      "fontSize": 14,
+      "fontFace": "Segoe UI Semibold",
+      "color": "#F8FAFC"
+    },
+    "header": {
+      "fontSize": 12,
+      "fontFace": "Segoe UI",
+      "color": "#CBD5E1"
+    },
+    "label": {
+      "fontSize": 10,
+      "fontFace": "Segoe UI",
+      "color": "#94A3B8"
+    }
+  },
+  "visualStyles": {
+    "*": {
+      "*": {
+        "background": [{ "color": { "solid": { "color": "#111827" } } }],
+        "border": [{ "show": true, "color": { "solid": { "color": "#1F2937" } } }],
+        "title": [{ "fontColor": { "solid": { "color": "#F8FAFC" } } }]
+      }
+    },
+    "card": {
+      "*": {
+        "labels": [{ "color": { "solid": { "color": "#E2E8F0" } } }]
+      }
+    }
+  }
+}

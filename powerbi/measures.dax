@@ -1,0 +1,77 @@
+// KLIMA DAX measures — paste into Power BI model
+// Assumes Import of klima.vw_powerbi_latest (table name: vw_powerbi_latest)
+// and optional vw_powerbi_hourly for trend charts.
+
+// --- Latest Temperature (national average of active temp readings) ---
+Latest Temperature = 
+VAR MaxObs =
+    CALCULATE (
+        MAX ( 'vw_powerbi_latest'[observed_at] ),
+        'vw_powerbi_latest'[parameter] = "temperature"
+    )
+RETURN
+CALCULATE (
+    AVERAGE ( 'vw_powerbi_latest'[value] ),
+    'vw_powerbi_latest'[parameter] = "temperature",
+    'vw_powerbi_latest'[observed_at] = MaxObs,
+    NOT ISBLANK ( 'vw_powerbi_latest'[value] )
+)
+
+// --- Active stations (fresh + non-null temperature) ---
+Active Stations = 
+CALCULATE (
+    DISTINCTCOUNT ( 'vw_powerbi_latest'[site_id] ),
+    'vw_powerbi_latest'[parameter] = "temperature",
+    'vw_powerbi_latest'[station_status] = "Active"
+)
+
+// --- Offline / fault / stale temperature stations ---
+Offline Stations = 
+CALCULATE (
+    DISTINCTCOUNT ( 'vw_powerbi_latest'[site_id] ),
+    'vw_powerbi_latest'[parameter] = "temperature",
+    'vw_powerbi_latest'[station_status] <> "Active"
+)
+
+// --- Hottest location (temperature only) ---
+Hottest Location = 
+VAR MaxObs =
+    CALCULATE (
+        MAX ( 'vw_powerbi_latest'[observed_at] ),
+        'vw_powerbi_latest'[parameter] = "temperature"
+    )
+VAR MaxTemp =
+    CALCULATE (
+        MAX ( 'vw_powerbi_latest'[value] ),
+        'vw_powerbi_latest'[parameter] = "temperature",
+        'vw_powerbi_latest'[observed_at] = MaxObs
+    )
+RETURN
+CALCULATE (
+    FIRSTNONBLANK ( 'vw_powerbi_latest'[site_name], 1 ),
+    'vw_powerbi_latest'[parameter] = "temperature",
+    'vw_powerbi_latest'[observed_at] = MaxObs,
+    'vw_powerbi_latest'[value] = MaxTemp
+)
+
+// --- Max observation time (Manila display helper) ---
+Max Observation Time Manila = 
+CALCULATE (
+    MAX ( 'vw_powerbi_latest'[observed_at_manila] ),
+    'vw_powerbi_latest'[parameter] = "temperature"
+)
+
+// --- National average rainfall (latest window) ---
+Latest Rainfall Avg = 
+VAR MaxObs =
+    CALCULATE (
+        MAX ( 'vw_powerbi_latest'[observed_at] ),
+        'vw_powerbi_latest'[parameter] = "rainfall"
+    )
+RETURN
+CALCULATE (
+    AVERAGE ( 'vw_powerbi_latest'[value] ),
+    'vw_powerbi_latest'[parameter] = "rainfall",
+    'vw_powerbi_latest'[observed_at] = MaxObs,
+    NOT ISBLANK ( 'vw_powerbi_latest'[value] )
+)

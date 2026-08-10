@@ -1,0 +1,27 @@
+{
+  "success": true,
+  "data": [
+    {
+      "site_id": "98",
+      "site_name": "Science Garden, Quezon City",
+      "lat": 14.645101,
+      "lon": 121.044258,
+      "parameter": "wind-direction",
+      "readable_parameter": "Wind Direction",
+      "readable_unit": "°",
+      "observed_at": "2026-08-10 21:20:00",
+      "value": "WNW (303.1°)"
+    },
+    {
+      "site_id": "5003",
+      "site_name": "Romblon Synop. Station",
+      "lat": 12.57381,
+      "lon": 122.26067,
+      "parameter": "wind-direction",
+      "readable_parameter": "Wind Direction",
+      "readable_unit": "°",
+      "observed_at": "2026-08-10 22:40:00",
+      "value": "N (0°)"
+    }
+  ]
+}

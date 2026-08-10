@@ -1,0 +1,29 @@
+{
+  "success": true,
+  "data": [
+    {
+      "site_id": "98",
+      "site_name": "Science Garden, Quezon City",
+      "lat": 14.645101,
+      "lon": 121.044258,
+      "parameter": "rainfall",
+      "readable_parameter": "Hourly Rain",
+      "readable_unit": "mm",
+      "observed_at": "2026-08-10 21:20:00",
+      "value": "0",
+      "24_hr_value": "136"
+    },
+    {
+      "site_id": "5001",
+      "site_name": "San Jose Synoptic Station",
+      "lat": 12.35954,
+      "lon": 121.047866,
+      "parameter": "rainfall",
+      "readable_parameter": "Hourly Rain",
+      "readable_unit": "mm",
+      "observed_at": "2026-08-10 22:30:00",
+      "value": "23.5",
+      "24_hr_value": "67.5"
+    }
+  ]
+}

@@ -1,0 +1,29 @@
+# Secrets / local env
+.env
+.env.*
+!.env.example
+
+# Runtime artifacts from api.sh / local runs
+cookies.txt
+index.html
+*.pyc
+__pycache__/
+.pytest_cache/
+.venv/
+venv/
+*.egg-info/
+
+# OS / editor
+.DS_Store
+Thumbs.db
+.idea/
+.vscode/
+.cursor/
+
+# Power BI local binaries (keep guides / DAX / themes)
+powerbi/*.pbix
+powerbi/*.pbit
+
+# Local scratch
+tmp/
+*.log

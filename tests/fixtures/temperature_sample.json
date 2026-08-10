@@ -1,0 +1,38 @@
+{
+  "success": true,
+  "data": [
+    {
+      "site_id": "98",
+      "site_name": "Science Garden, Quezon City",
+      "lat": 14.645101,
+      "lon": 121.044258,
+      "parameter": "temperature",
+      "readable_parameter": "Temperature",
+      "readable_unit": "°C",
+      "observed_at": "2026-08-10 21:20:00",
+      "value": "26.12"
+    },
+    {
+      "site_id": "5001",
+      "site_name": "San Jose Synoptic Station",
+      "lat": 12.35954,
+      "lon": 121.047866,
+      "parameter": "temperature",
+      "readable_parameter": "Temperature",
+      "readable_unit": "°C",
+      "observed_at": "2026-08-10 22:30:00",
+      "value": "0"
+    },
+    {
+      "site_id": "5003",
+      "site_name": "  Romblon Synop. Station  ",
+      "lat": 12.57381,
+      "lon": 122.26067,
+      "parameter": "temperature",
+      "readable_parameter": "Temperature",
+      "readable_unit": "°C",
+      "observed_at": "2026-08-10 22:30:00",
+      "value": "0.0"
+    }
+  ]
+}

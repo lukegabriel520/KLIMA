@@ -1,0 +1,46 @@
+name: AWS Weather Data Pipeline
+
+on:
+  schedule:
+    # Off-peak quarter-hours (UTC) — reduces GitHub schedule contention
+    - cron: "7,22,37,52 * * * *"
+  workflow_dispatch:
+
+concurrency:
+  group: klima-etl
+  cancel-in-progress: false
+
+permissions:
+  contents: read
+
+jobs:
+  run-etl:
+    runs-on: ubuntu-latest
+    timeout-minutes: 15
+
+    steps:
+      - name: Checkout Repository
+        uses: actions/checkout@v4
+
+      - name: Set up Python
+        uses: actions/setup-python@v5
+        with:
+          python-version: "3.11"
+          cache: "pip"
+
+      - name: Install Dependencies
+        run: |
+          python -m pip install --upgrade pip
+          pip install -r requirements.txt
+
+      - name: Make api.sh executable
+        run: chmod +x api.sh
+
+      - name: Unit Tests
+        run: python -m pytest tests/ -q
+
+      - name: Run ETL Script
+        env:
+          SUPABASE_DB_URL: ${{ secrets.SUPABASE_DB_URL }}
+          KLIMA_PARAMETERS: rainfall,temperature,heat-index,humidity,pressure,wind-speed,wind-direction
+        run: python etl_pipeline.py
