@@ -5,11 +5,9 @@ All README images live in [`assets/`](assets/). Every file below is used.
 | File | Used in README | Content |
 |------|----------------|---------|
 | `logo.png` | Hero | KLIMA wordmark |
-| `architecture.png` | Architecture | Pipeline diagram (PANaHON → Actions → Supabase → Power BI) |
-| `star-schema.png` | Architecture | Postgres star schema |
+| `star-schema.png` | Architecture | Postgres schema |
 | `dashboard-full.png` | Live dashboard | Full Power BI canvas |
 | `dashboard-kpis.png` | Live dashboard (details) | KPI card strip |
-| `dashboard-map.png` | Live dashboard (details) | Stations map |
 
 ## Power BI report
 
@@ -21,3 +19,4 @@ Personal workspace link — sign-in may be required. Screenshots cover anonymous
 
 - No passwords, `.env`, or Actions secret values in images  
 - Prefer temperature + clear status filters for map shots  
+- Export screenshots as RGB PNG (avoid odd gamma / sRGB chunks that wash out on GitHub)

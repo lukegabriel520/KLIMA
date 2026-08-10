@@ -1,9 +1,8 @@
 <p align="center">
-  <img src="docs/assets/logo.png" alt="KLIMA" width="200" />
+  <img src="docs/assets/logo.png" alt="KLIMA" width="360" />
 </p>
 
 <p align="center">
-  <strong>Kloud-Linked Integrated Meteorological Analytics</strong><br />
   Philippine weather stations → Supabase → Power BI.<br />
   Free-tier pipeline. Updates about every 15 minutes.
 </p>
@@ -52,18 +51,14 @@ No paid scheduler. Built to stay on free plans.
 > Personal workspace link. Sign-in may be required. Screenshots below are for visitors without access.
 
 <p align="center">
-  <img src="docs/assets/dashboard-full.png" alt="KLIMA Power BI dashboard — full canvas" width="900" />
+  <img src="docs/assets/dashboard-full.png" alt="KLIMA Power BI dashboard — full canvas" width="920" />
 </p>
 
 <details>
-<summary><strong>KPI strip · Map</strong></summary>
+<summary><strong>KPI strip</strong></summary>
 
 <p align="center">
-  <img src="docs/assets/dashboard-kpis.png" alt="KPI cards: temperature, active, offline, hottest location" width="900" />
-</p>
-
-<p align="center">
-  <img src="docs/assets/dashboard-map.png" alt="Philippine AWS stations map" width="900" />
+  <img src="docs/assets/dashboard-kpis.png" alt="KPI cards: temperature, active, offline, hottest location" width="920" />
 </p>
 
 </details>
@@ -257,7 +252,7 @@ Built for free tiers — not a guaranteed production SLA.
 
 | Path | Purpose |
 |------|---------|
-| [`docs/assets/`](docs/assets/) | Logo, architecture, schema, dashboard screenshots |
+| [`docs/assets/`](docs/assets/) | Logo, schema, dashboard screenshots |
 | [`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md) | Final image inventory |
 | [`powerbi/`](powerbi/) | Dashboard connection and layout |
 
