@@ -1,8 +1,5 @@
 <p align="center">
-  <img src="docs/assets/logo.png" alt="KLIMA" width="360" />
-</p>
-
-<p align="center">
+  <img src="docs/assets/logo.png" alt="KLIMA" width="360" /><br />
   Philippine weather stations → Supabase → Power BI.<br />
   Free-tier pipeline. Updates about every 15 minutes.
 </p>
