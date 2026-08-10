@@ -99,10 +99,6 @@ flowchart LR
     API --> Fetch --> Cron --> ETL --> DB --> Desktop --> Service
 ```
 
-<p align="center">
-  <img src="docs/assets/architecture.png" alt="KLIMA pipeline architecture" width="900" />
-</p>
-
 ### Measures each run
 
 `rainfall` · `temperature` · `heat-index` · `humidity` · `pressure` · `wind-speed` · `wind-direction`
