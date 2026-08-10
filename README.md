@@ -1,130 +1,272 @@
-# KLIMA
+<p align="center">
+  <img src="docs/assets/logo.png" alt="KLIMA" width="280" />
+</p>
 
-**Kloud-Linked Integrated Meteorological Analytics**
+<p align="center">
+  <strong>Kloud-Linked Integrated Meteorological Analytics</strong><br />
+  Philippine weather stations → Supabase → Power BI.<br />
+  Free-tier pipeline. Updates about every 15 minutes.
+</p>
 
-Zero-cost pipeline: PAGASA PANaHON Automatic Weather Station (AWS) telemetry → Supabase Postgres → Power BI Desktop.
+<p align="center">
+  <a href="https://github.com/lukegabriel520/KLIMA/actions/workflows/ingest_weather.yml"><img src="https://img.shields.io/github/actions/workflow/status/lukegabriel520/KLIMA/ingest_weather.yml?label=pipeline&color=1B9E77" alt="Pipeline status"></a>
+  <img src="https://img.shields.io/badge/stack-Python%20%7C%20Supabase%20%7C%20Actions%20%7C%20Power%20BI-0F172A" alt="Stack">
+  <img src="https://img.shields.io/badge/cost-free%20tier-134E4A" alt="Cost">
+  <img src="https://img.shields.io/badge/source-PAGASA%20PANaHON-0B3D91" alt="Source">
+</p>
 
-```text
-panahon.gov.ph AWS API
-        │
-        ▼  api.sh (CSRF + cookie extract) every ~15 min
-GitHub Actions (public repo runners)
-        │
-        ▼  etl_pipeline.py (Pydantic + Polars + SQLAlchemy)
-Supabase Postgres schema `klima`
-        │
-        ▼  Import mode
-Power BI Desktop (local dashboard)
+<p align="center">
+  <a href="#what-is-klima">About</a> ·
+  <a href="#live-dashboard">Dashboard</a> ·
+  <a href="#architecture">Architecture</a> ·
+  <a href="#quick-start">Quick Start</a> ·
+  <a href="#repository-layout">Layout</a> ·
+  <a href="#free-tier-limits">Free tier</a> ·
+  <a href="#attribution--disclaimer">Attribution</a>
+</p>
+
+---
+
+## What is KLIMA?
+
+**KLIMA** (*Kloud-Linked Integrated Meteorological Analytics*) reads live data from Philippine automated weather stations on the public [PANaHON](https://panahon.gov.ph/) map, stores it in Supabase (Postgres), and shows it in Power BI.
+
+| Piece | Role |
+|-------|------|
+| [`api.sh`](api.sh) | Fetches station JSON from PANaHON |
+| [`etl_pipeline.py`](etl_pipeline.py) | Cleans, validates, and loads into the database |
+| GitHub Actions | Runs the load on a schedule (public repo runners) |
+| Supabase | Holds recent readings plus hourly/daily summaries |
+| Power BI | Dashboard (Desktop or Service) |
+
+No paid scheduler. Built to stay on free plans.
+
+---
+
+## Live dashboard
+
+<p align="center">
+  <a href="https://app.powerbi.com/groups/me/reports/1b639dfd-37e1-4a87-bf36-6c56d9a2e5bc/c7043a12264684991e27?experience=power-bi"><strong>Open KLIMA in Power BI Service</strong></a>
+</p>
+
+> Personal workspace link. Sign-in may be required. Screenshots below are for visitors without access.
+
+<p align="center">
+  <img src="docs/assets/dashboard-full.png" alt="KLIMA Power BI dashboard — full canvas" width="900" />
+</p>
+
+<details>
+<summary><strong>KPI strip · Map</strong></summary>
+
+<p align="center">
+  <img src="docs/assets/dashboard-kpis.png" alt="KPI cards: temperature, active, offline, hottest location" width="900" />
+</p>
+
+<p align="center">
+  <img src="docs/assets/dashboard-map.png" alt="Philippine AWS stations map" width="900" />
+</p>
+
+</details>
+
+---
+
+## Architecture
+
+```mermaid
+flowchart LR
+    subgraph Source ["PANaHON"]
+        API["Station JSON API\n~100 sites × 7 measures"]
+    end
+
+    subgraph Extract ["api.sh"]
+        Fetch["Session cookie + fetch"]
+    end
+
+    subgraph Schedule ["GitHub Actions"]
+        Cron["Every ~15 min\n(+ manual run)"]
+        ETL["etl_pipeline.py"]
+    end
+
+    subgraph Store ["Supabase"]
+        DB["klima tables\n+ Power BI views"]
+    end
+
+    subgraph BI ["Power BI"]
+        Desktop["Desktop"]
+        Service["Service"]
+    end
+
+    API --> Fetch --> Cron --> ETL --> DB --> Desktop --> Service
 ```
 
-## What you get
+<p align="center">
+  <img src="docs/assets/architecture.png" alt="KLIMA pipeline architecture" width="900" />
+</p>
 
-| Layer | Object |
-|-------|--------|
-| Extract | [`api.sh`](api.sh) — only HTTP client |
-| Transform/Load | [`etl_pipeline.py`](etl_pipeline.py) |
-| Orchestration | [`.github/workflows/ingest_weather.yml`](.github/workflows/ingest_weather.yml) |
-| Warehouse | `klima.dim_station`, `klima.fact_telemetry`, `klima.fact_latest`, `klima.agg_hourly`, `klima.agg_daily` |
-| BI views | `klima.vw_powerbi_latest`, `klima.vw_powerbi_hourly`, `klima.vw_powerbi_daily` |
-| Power BI pack | [`powerbi/`](powerbi/) |
+### Measures each run
 
-Parameters ingested each run:
+`rainfall` · `temperature` · `heat-index` · `humidity` · `pressure` · `wind-speed` · `wind-direction`
 
-`rainfall`, `temperature`, `heat-index`, `humidity`, `pressure`, `wind-speed`, `wind-direction`
+### How long data is kept
 
-## Free-tier reality check
+| Layer | Keep |
+|-------|------|
+| Raw readings (`fact_telemetry`) | 48 hours |
+| Hourly summaries (`agg_hourly`) | 30 days |
+| Daily summaries (`agg_daily`) | 365 days (Asia/Manila calendar day) |
 
-| Service | Constraint | KLIMA mitigation |
-|---------|------------|------------------|
-| Supabase Free | 500 MB DB; pause after 7 days idle | 48h raw / 30d hourly / 1y daily retention; Actions keep project warm |
-| Supabase Free | No PITR backups | Accept risk; schema in git migrations |
-| GitHub Free private | 2,000 Actions minutes/mo; schedules unreliable | **Public repo** → standard runners unlimited |
-| GitHub schedule | May delay; disables after 60 days no repo activity | Off-peak cron + occasional commits / `workflow_dispatch` |
-| Power BI Free | No Publish to web code creation | Local Desktop dashboard only |
+<p align="center">
+  <img src="docs/assets/star-schema.png" alt="KLIMA Postgres star schema" width="900" />
+</p>
 
-This is production-*minded*, not SLA-backed.
+### Cleaning rules
 
-## Quick start (local)
+- Times from the API are treated as **Asia/Manila**, stored as **UTC**
+- Temperature / heat-index / humidity `0` → empty (bad sensor)
+- Rainfall `0` kept (no rain is valid)
+- Wind like `WNW (303.1°)` → degrees only
+- One row per station + time + measure
+
+---
+
+## Quick Start
+
+**You need:** Python 3.11+, `curl`, bash (Git Bash on Windows), a free Supabase project, Power BI Desktop (for the dashboard).
+
+### 1. Clone & install
 
 ```bash
-# Windows: use Git Bash
+git clone https://github.com/lukegabriel520/KLIMA.git
+cd KLIMA
 python -m venv .venv
-source .venv/Scripts/activate   # or .venv\Scripts\activate
+# Windows: .venv\Scripts\activate
+source .venv/bin/activate
 pip install -r requirements.txt
+```
 
-# Dry run (no DB)
+### 2. Database schema
+
+In the Supabase **SQL Editor**, run the full file:
+
+[`supabase/migrations/20260810150000_klima_star_schema.sql`](supabase/migrations/20260810150000_klima_star_schema.sql)
+
+That creates the `klima` tables, views, and the `klima_readonly` login used by Power BI.
+
+### 3. Local secrets
+
+```bash
+cp .env.example .env
+```
+
+Set `SUPABASE_DB_URL` to the **transaction** pooler URL (port **6543**) with `sslmode=require`. See [`.env.example`](.env.example).
+
+Never commit `.env`.
+
+### 4. Dry run, then live load
+
+```bash
+# Windows only — point at Git Bash so api.sh can run
+export KLIMA_BASH="/c/Program Files/Git/bin/bash.exe"
+
 DRY_RUN=1 python etl_pipeline.py
-
-# Live load — copy .env.example → .env and set SUPABASE_DB_URL
-# Prefer Supavisor transaction mode (6543) for GitHub/Actions:
-# postgresql://postgres.zzbjcfluxnulwofqkqht:[PASSWORD]@aws-0-ap-southeast-1.pooler.supabase.com:6543/postgres?sslmode=require
-export SUPABASE_DB_URL='...'
 python etl_pipeline.py
 ```
 
-Tests:
-
-```bash
-pytest tests/ -q
-```
-
-## Supabase setup
-
-Project: **KLIMA** (`zzbjcfluxnulwofqkqht`, `ap-southeast-1`)
-
-1. Migration already applied: [`supabase/migrations/20260810150000_klima_star_schema.sql`](supabase/migrations/20260810150000_klima_star_schema.sql)
-2. Set Power BI role password:
-
-```sql
-ALTER ROLE klima_readonly WITH PASSWORD 'STRONG_PASSWORD';
-```
-
-3. Health check:
+Check health in Supabase:
 
 ```sql
 SELECT * FROM klima.vw_health;
 ```
 
-## GitHub Actions secrets
+### 5. Tests
 
-Repo Settings → Secrets and variables → Actions:
+```bash
+pytest tests/ -q
+```
+
+### 6. GitHub Actions
+
+Repo **Settings → Secrets and variables → Actions**:
 
 | Secret | Value |
-|--------|-------|
-| `SUPABASE_DB_URL` | Transaction-mode pooler URL with DB password + `sslmode=require` |
+|--------|--------|
+| `SUPABASE_DB_URL` | Same transaction pooler URL as local |
 
-Do **not** store `PAGASA_API_URL` — extractor builds URL inside `api.sh`.
+Workflow: [`.github/workflows/ingest_weather.yml`](.github/workflows/ingest_weather.yml)  
+Manual run: **Actions → AWS Weather Data Pipeline → Run workflow**
 
-Manual run: Actions → **AWS Weather Data Pipeline** → **Run workflow**.
+### 7. Power BI
 
-## Power BI Desktop
+Full steps: [`powerbi/CONNECTION.md`](powerbi/CONNECTION.md).
 
-See [`powerbi/CONNECTION.md`](powerbi/CONNECTION.md), [`powerbi/measures.dax`](powerbi/measures.dax), [`powerbi/DASHBOARD_LAYOUT.md`](powerbi/DASHBOARD_LAYOUT.md).
+| Field | Value |
+|--------|--------|
+| Server | Supabase **session** pooler host (port `5432`) |
+| Database | `postgres` |
+| User | `klima_readonly.<project_ref>` |
+| Mode | **Import** |
+| Objects | `klima.vw_powerbi_latest` · `vw_powerbi_hourly` · `vw_powerbi_daily` |
 
-Theme: [`powerbi/klima-theme.json`](powerbi/klima-theme.json).
+Set the read-only password once (SQL Editor):
 
-## Transform rules
+```sql
+ALTER ROLE klima_readonly WITH PASSWORD 'YOUR_STRONG_PASSWORD';
+```
 
-- API wall clock treated as **Asia/Manila**, stored as **UTC**
-- Temperature / heat-index / humidity `0` → `NULL` (sensor fault)
-- Rainfall `0` kept (valid dry reading)
-- Wind direction text `WNW (303.1°)` → numeric degrees
-- Unique key: `(site_id, observed_at, parameter)` — duplicates skipped
+Extras: [`powerbi/measures.dax`](powerbi/measures.dax) · [`powerbi/klima-theme.json`](powerbi/klima-theme.json) · [`powerbi/DASHBOARD_LAYOUT.md`](powerbi/DASHBOARD_LAYOUT.md)
 
-## Data attribution & disclaimer
+---
 
-> Near-real-time values originate from **PAGASA PANaHON** Automatic Weather Stations ([panahon.gov.ph](https://panahon.gov.ph/)). Official hydromet archives may require formal request and have redistribution restrictions. KLIMA uses the public map API for personal/educational analytics; gaps, biases, and sensor faults can appear. Not an official PAGASA product. Do not treat as operational forecast guidance.
+## Repository layout
 
-## Recovery
+```text
+KLIMA/
+├── api.sh                          # Fetches station JSON
+├── etl_pipeline.py                 # Clean → load → retention
+├── requirements.txt
+├── .env.example
+├── .github/workflows/ingest_weather.yml
+├── supabase/migrations/            # Schema, views, grants
+├── powerbi/                        # Connection, DAX, theme, queries
+├── tests/                          # Transform tests
+├── scripts/load_env.py             # Local .env helper
+└── docs/
+    ├── SCREENSHOTS.md              # Media inventory
+    └── assets/                     # README images (PNG)
+```
 
-| Problem | Action |
-|---------|--------|
-| Free project paused | Restore in Supabase dashboard; re-run workflow |
-| Schedule stopped (60d idle) | Push commit or re-enable workflow |
-| DB near 500 MB | Confirm retention deletes; shorten raw window in ETL |
-| API shape change | Fix `api.sh` / Pydantic models; tests in `tests/fixtures` |
-| Failed parameter | Whole run aborts (no partial commit) |
+---
+
+## Free-tier limits
+
+| Limit | How KLIMA handles it |
+|-------|----------------------|
+| Supabase Free ~500 MB; idle pause | Short retention; scheduled loads keep the project active |
+| No point-in-time recovery on Free | Schema lives in git migrations |
+| Private repo Action minutes | Prefer a **public** repo |
+| Schedules can drift or pause after long idle | Off-peak cron + occasional manual runs |
+| Power BI Free has no public “Publish to web” | Desktop + Service for signed-in users |
+
+Built for free tiers — not a guaranteed production SLA.
+
+---
+
+## Attribution & disclaimer
+
+> Values come from **PAGASA PANaHON** automatic weather stations ([panahon.gov.ph](https://panahon.gov.ph/)). Official archives may need a formal request and have redistribution limits. KLIMA uses the public map API for personal / educational use. Gaps and sensor faults happen. **Not an official PAGASA product.** Do not use as operational forecast guidance.
+
+---
+
+## Docs & media
+
+| Path | Purpose |
+|------|---------|
+| [`docs/assets/`](docs/assets/) | Logo, architecture, schema, dashboard screenshots |
+| [`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md) | Final image inventory |
+| [`powerbi/`](powerbi/) | Dashboard connection and layout |
+
+---
 
 ## License / ethics
 
-Code in this repo: use freely for learning. Respect PAGASA terms for redistribution of raw hydrometeorological data.
+Code here is for learning and personal analytics. Respect PAGASA terms if you redistribute raw weather data.
