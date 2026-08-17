@@ -42,20 +42,13 @@ No paid scheduler. Built to stay on free plans.
 ## Live dashboard
 
 <p align="center">
-  <a href="https://app.powerbi.com/groups/me/reports/1b639dfd-37e1-4a87-bf36-6c56d9a2e5bc/c7043a12264684991e27?experience=power-bi"><strong>Open KLIMA in Power BI Service</strong></a>
+  <a href="https://datastudio.google.com/u/0/reporting/92ea7983-8afe-46c2-8be1-d6f25a535d59/page/jSe6F/edit"><strong>Open KLIMA in Looker Studio</strong></a>
 </p>
 
 > Personal workspace link. Sign-in may be required. Screenshots below are for visitors without access.
 
 <p align="center">
   <img src="docs/assets/dashboard-full.png" alt="KLIMA Power BI dashboard — full canvas" width="920" />
-</p>
-
-<details>
-<summary><strong>KPI strip</strong></summary>
-
-<p align="center">
-  <img src="docs/assets/dashboard-kpis.png" alt="KPI cards: temperature, active, offline, hottest location" width="920" />
 </p>
 
 </details>
