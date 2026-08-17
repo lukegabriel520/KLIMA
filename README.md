@@ -1,12 +1,11 @@
 <p align="center">
   <img src="docs/assets/logo.png" alt="KLIMA" width="360" /><br />
-  Philippine weather stations → Supabase → Power BI.<br />
+  Philippine weather stations → Supabase → Dashboard<br />
   Free-tier pipeline. Updates about every 15 minutes.
 </p>
 
 <p align="center">
   <a href="https://github.com/lukegabriel520/KLIMA/actions/workflows/ingest_weather.yml"><img src="https://img.shields.io/github/actions/workflow/status/lukegabriel520/KLIMA/ingest_weather.yml?label=pipeline&color=1B9E77" alt="Pipeline status"></a>
-  <img src="https://img.shields.io/badge/stack-Python%20%7C%20Supabase%20%7C%20Actions%20%7C%20Power%20BI-0F172A" alt="Stack">
   <img src="https://img.shields.io/badge/cost-free%20tier-134E4A" alt="Cost">
   <img src="https://img.shields.io/badge/source-PAGASA%20PANaHON-0B3D91" alt="Source">
 </p>
@@ -25,7 +24,7 @@
 
 ## What is KLIMA?
 
-**KLIMA** (*Kloud-Linked Integrated Meteorological Analytics*) reads live data from Philippine automated weather stations on the public [PANaHON](https://panahon.gov.ph/) map, stores it in Supabase (Postgres), and shows it in Power BI.
+**KLIMA** (*Kloud-Linked Integrated Meteorological Analytics*) reads live data from Philippine automated weather stations on the public [PANaHON](https://panahon.gov.ph/) map, stores it in Supabase (Postgres), and shows it in Looker Studio.
 
 | Piece | Role |
 |-------|------|
@@ -33,7 +32,7 @@
 | [`etl_pipeline.py`](etl_pipeline.py) | Cleans, validates, and loads into the database |
 | GitHub Actions | Runs the load on a schedule (public repo runners) |
 | Supabase | Holds recent readings plus hourly/daily summaries |
-| Power BI | Dashboard (Desktop or Service) |
+| Looker Studio | Dashboard (Desktop or Service) |
 
 No paid scheduler. Built to stay on free plans.
 
@@ -48,7 +47,7 @@ No paid scheduler. Built to stay on free plans.
 > Personal workspace link. Sign-in may be required. Screenshots below are for visitors without access.
 
 <p align="center">
-  <img src="docs/assets/dashboard-full.png" alt="KLIMA Power BI dashboard — full canvas" width="920" />
+  <img src="docs/assets/dashboard-full.png" alt="KLIMA dashboard — full canvas" width="920" />
 </p>
 
 </details>
@@ -73,10 +72,10 @@ flowchart LR
     end
 
     subgraph Store ["Supabase"]
-        DB["klima tables\n+ Power BI views"]
+        DB["klima tables\n+ Looker Studio views"]
     end
 
-    subgraph BI ["Power BI"]
+    subgraph BI ["Looker Studio"]
         Desktop["Desktop"]
         Service["Service"]
     end
@@ -118,7 +117,7 @@ KLIMA/
 ├── .env.example
 ├── .github/workflows/ingest_weather.yml
 ├── supabase/migrations/            # Schema, views, grants
-├── powerbi/                        # Connection, DAX, theme, queries
+├── powerbi/                        # unsupported //changed to Looker Studio
 ├── tests/                          # Transform tests
 ├── scripts/load_env.py             # Local .env helper
 └── docs/
@@ -136,7 +135,7 @@ KLIMA/
 | No point-in-time recovery on Free | Schema lives in git migrations |
 | Private repo Action minutes | Prefer a **public** repo |
 | Schedules can drift or pause after long idle | Off-peak cron + occasional manual runs |
-| Power BI Free has no public “Publish to web” | Desktop + Service for signed-in users |
+| Looker Studio Free has no public “Publish to web” | Desktop + Service for signed-in users |
 
 Built for free tiers — not a guaranteed production SLA.
 
@@ -154,7 +153,6 @@ Built for free tiers — not a guaranteed production SLA.
 |------|---------|
 | [`docs/assets/`](docs/assets/) | Logo, schema, dashboard screenshots |
 | [`docs/SCREENSHOTS.md`](docs/SCREENSHOTS.md) | Final image inventory |
-| [`powerbi/`](powerbi/) | Dashboard connection and layout |
 
 ---
 
